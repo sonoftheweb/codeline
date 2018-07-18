@@ -9,6 +9,8 @@ add_action( 'init', 'register_film_taxonomy', 0 );
 add_action('wp_enqueue_scripts', 'initTheme');
 add_action('add_meta_boxes', 'custom_post_meta');
 add_action( 'save_post', 'save_release_date_and_ticket_price' );
+add_shortcode( 'films', 'film_shortcode' );
+
 
 function initTheme() {
     // Load theme css file, parent before child
@@ -59,5 +61,46 @@ function save_release_date_and_ticket_price( $post_id ) {
         update_post_meta( $post_id, 'release_date', $newReleaseDate );
     } elseif ( '' === $newReleaseDate && $oldReleaseDate ) {
         delete_post_meta( $post_id, 'release_date', $oldReleaseDate );
+    }
+}
+
+function listAllTaxonomies($post_id, $taxonomies)
+{
+    $all = array();
+    foreach ($taxonomies as $taxonomy) {
+        $terms = get_the_terms($post_id,$taxonomy);
+        $term_names = '';
+        foreach ($terms as $term) {
+            $term_names .= $term->name;
+            if ($term !== end($terms)){
+                $term_names .= ', ';
+            }
+
+        }
+        $all[$taxonomy] = $term_names;
+    }
+    return $all;
+}
+
+function film_shortcode($attributes)
+{
+    $a = shortcode_atts( array(
+        'count' => 5
+    ), $attributes );
+
+    query_posts( array( 'post_type' => array('films'), 'posts_per_page' => $a['count'], 'order' => 'DESC'));
+    if ( have_posts() ) {
+        $output = '<ul>';
+        while (have_posts()) : the_post();
+
+            $output .= '<li><a href="'.get_the_permalink().'" title="'.get_the_title().'">'.get_the_title().'</a> </li>';
+
+        endwhile;
+        $output .= '<ul>';
+
+        return $output;
+
+    } else {
+        echo 'No films added yet';
     }
 }
