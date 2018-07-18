@@ -4,6 +4,9 @@ use inc\UniteChildFunctions;
 
 require_once( trailingslashit(dirname(__FILE__)) . '/autoloader.php' );
 
+// Load all theme styles, post types and metaboxes
+// These are pulling from a class in which all WP initialization is done
+// I did this to display possibilities in using classes in theme development as well as plugin development
 add_action('init', 'film_post_types');
 add_action( 'init', 'register_film_taxonomy', 0 );
 add_action('wp_enqueue_scripts', 'initTheme');
@@ -18,22 +21,37 @@ function initTheme() {
     $uniteInstance->load_unite_styles();
 }
 
+/**
+ * I could have used a plugin here, but it's always best to build post types into the child theme
+ */
 function film_post_types() {
     $uniteInstance = UniteChildFunctions::get_instance();
     $uniteInstance->film_post_types();
 }
 
+/**
+ * Register film taxonomy (Country, Year, Actors ... etc) again pulling from class
+ */
 function register_film_taxonomy() {
     $uniteInstance = UniteChildFunctions::get_instance();
     $uniteInstance->create_film_taxonomies();
 }
 
+/**
+ * Custom post meta for release date and ticket price. This was placed in a meta box which is instantiated in the class
+ */
 function custom_post_meta() {
     $uniteInstance = UniteChildFunctions::get_instance();
     $uniteInstance->add_fields_meta_box();
 }
 
-function save_release_date_and_ticket_price( $post_id ) {
+/**
+ * Save custom post types meta from the custom meta box
+ * I decided to go this route to show that even if metaboxes are instantiated in the class, it is still accessible in the native functions that WP has to offer
+ * @param $post_id
+ * @return mixed
+ */
+function save_release_date_and_ticket_price($post_id ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return $post_id;
     }
@@ -64,6 +82,13 @@ function save_release_date_and_ticket_price( $post_id ) {
     }
 }
 
+/**
+ * Function to ease the collection of all taxonomies added to the post. Listing them is as easy as having a loop
+ *
+ * @param $post_id
+ * @param $taxonomies
+ * @return array
+ */
 function listAllTaxonomies($post_id, $taxonomies)
 {
     $all = array();
@@ -75,13 +100,18 @@ function listAllTaxonomies($post_id, $taxonomies)
             if ($term !== end($terms)){
                 $term_names .= ', ';
             }
-
         }
         $all[$taxonomy] = $term_names;
     }
     return $all;
 }
 
+/**
+ * The film shortcode function
+ *
+ * @param $attributes
+ * @return string
+ */
 function film_shortcode($attributes)
 {
     $a = shortcode_atts( array(
