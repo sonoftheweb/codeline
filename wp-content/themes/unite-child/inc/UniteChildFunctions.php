@@ -12,6 +12,11 @@ class UniteChildFunctions
         return $instance;
     }
 
+    public function makeNonceField()
+    {
+        return '<input type="hidden" name="unite_nonce" value="' . wp_create_nonce( basename(__FILE__) ) . '">';
+    }
+
     function load_unite_styles()
     {
         wp_enqueue_style( 'unite-style', get_template_directory_uri() . '/style.css' );
@@ -150,4 +155,38 @@ class UniteChildFunctions
         );
         register_taxonomy( 'actors', array( 'films' ), $args );
     }
+
+    public function add_fields_meta_box()
+    {
+        add_meta_box(
+            'fields_meta_box',
+            'Ticket Price and Release Date',
+            array( $this,  'fields_ticket_price_date' ),
+            'films',
+            'normal',
+            'high'
+        );
+    }
+
+    public function fields_ticket_price_date()
+    {
+        global $post;
+        $ticketPrice = get_post_meta( $post->ID, 'ticket_price', true );
+        $releaseDate = get_post_meta( $post->ID, 'release_date', true );
+        $output = $this->makeNonceField();
+        $output .= '<p>
+                        <label for="ticket_price">Ticket Price</label>
+                        <br>
+                        <input type="text" name="ticket_price" id="ticket_price" class="regular-text" value="' . $ticketPrice . '">
+                    </p>';
+        $output .= '<p>
+                        <label for="ticket_price">Release Date</label>
+                        <br>
+                        <input type="text" name="release_date" id="release_date" class="regular-text" value="' . $releaseDate . '">
+                    </p>';
+
+        echo $output;
+    }
+
+
 }
