@@ -18,7 +18,7 @@ class UniteChildFunctions
         wp_enqueue_style( 'unitechild-style',
             get_stylesheet_directory_uri() . '/style.css',
             array( 'unite-style' ),
-            wp_get_theme()->get('Version')
+            wp_get_theme()->get('Version' )
         );
     }
 
@@ -36,7 +36,7 @@ class UniteChildFunctions
             'not_found_in_trash' => 'No film found in trash'
         );
 
-        register_post_type( 'Slides',
+        register_post_type( 'films',
             array(
                 'labels' => $labels,
                 'description'          => 'Description of film',
@@ -44,12 +44,110 @@ class UniteChildFunctions
                 'menu_icon'            => 'dashicons-images-alt2',
                 'menu_position'        => 5,
                 'public'               => true,
-                'register_meta_box_cb' => array('SlideJS', 'createCPTMetaboxes'),
                 'rewrite'              => array( 'slug' => 'films', 'with_front' => false ),
                 'show_in_admin_bar'    => false,
                 'show_in_nav_menus'    => true,
                 'show_ui'              => true,
                 'supports'             => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'revisions', 'page-attributes')
             ));
+    }
+
+    public function create_film_taxonomies()
+    {
+        $labels = array(
+            'name'              => 'Genres',
+            'singular_name'     => 'Genre',
+            'search_items'      => 'Search Genres',
+            'all_items'         => 'All Genres',
+            'parent_item'       => 'Parent Genre',
+            'parent_item_colon' => 'Parent Genre:',
+            'edit_item'         => 'Edit Genre',
+            'update_item'       => 'Update Genre',
+            'add_new_item'      => 'Add New Genre',
+            'new_item_name'     => 'New Genre',
+            'menu_name'         => 'Genres',
+        );
+
+        $args = array(
+            'hierarchical'      => false,
+            'labels'            => $labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'genre' ),
+        );
+        register_taxonomy( 'genre', array( 'films' ), $args );
+
+        $labels = array(
+            'name'              => 'Countries',
+            'singular_name'     => 'Country',
+            'search_items'      => 'Search Countries',
+            'all_items'         => 'All Countries',
+            'parent_item'       => 'Parent Country',
+            'parent_item_colon' => 'Parent Country:',
+            'edit_item'         => 'Edit Country',
+            'update_item'       => 'Update Country',
+            'add_new_item'      => 'Add New Country',
+            'new_item_name'     => 'New Country',
+            'menu_name'         => 'Countries',
+        );
+
+        $args = array(
+            'hierarchical'      => false,
+            'labels'            => $labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'countries' ),
+        );
+        register_taxonomy( 'countries', array( 'films' ), $args );
+
+        $labels = array(
+            'name'              => 'Years',
+            'singular_name'     => 'Year',
+            'search_items'      => 'Search year',
+            'all_items'         => 'All Years',
+            'parent_item'       => 'Parent Year',
+            'parent_item_colon' => 'Parent Year:',
+            'edit_item'         => 'Edit Year',
+            'update_item'       => 'Update Year',
+            'add_new_item'      => 'Add New Year',
+            'new_item_name'     => 'New Year',
+            'menu_name'         => 'Years',
+        );
+
+        $args = array(
+            'hierarchical'      => false,
+            'labels'            => $labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'years' ),
+        );
+        register_taxonomy( 'years', array( 'films' ), $args );
+
+        $labels = array(
+            'name'              => 'Actors',
+            'singular_name'     => 'Actor',
+            'search_items'      => 'Search Actor',
+            'all_items'         => 'All Actor',
+            'parent_item'       => 'Parent Actor',
+            'parent_item_colon' => 'Parent Actor:',
+            'edit_item'         => 'Edit Actor',
+            'update_item'       => 'Update Actor',
+            'add_new_item'      => 'Add New Actor',
+            'new_item_name'     => 'New Actor',
+            'menu_name'         => 'Actors',
+        );
+
+        $args = array(
+            'hierarchical'      => false,
+            'labels'            => $labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'actors' ),
+        );
+        register_taxonomy( 'actors', array( 'films' ), $args );
     }
 }
